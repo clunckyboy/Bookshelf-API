@@ -1,6 +1,5 @@
 const { nanoid } = require('nanoid');
 const books = require('./books');
-// const { id, name, publisher } = books;
 
 const addBookHandler = (request, h) => {
     const { name, year, author, summary, publisher, pageCount, readPage, reading } = request.payload; 
@@ -58,6 +57,79 @@ const addBookHandler = (request, h) => {
 };
 
 const getAllBooksHandler = (request, h) => {
+
+    const { name: named, reading: reads, finished} = request.query;
+
+    if(named !== undefined){
+        const book = books.filter((book) => book.name.toLowerCase().includes(named.toLowerCase()));
+
+        const aBooks = book.map(book => ({
+            id: book.id,
+            name: book.name,
+            publisher: book.publisher
+        }));
+
+        const response = h.response({
+            status: 'success',
+            data: {
+                books: aBooks
+            }
+        });
+        response.code(200);
+        return response;
+    }
+
+    if(reads !== undefined){
+        let book;
+        if (reads == 0){
+            book = books.filter((book) => book.reading == false);
+        } else if (reads == 1){
+            book = books.filter((book) => book.reading == true);
+        } else {
+            book = books;
+        }
+    
+        const aBooks = book.map(book => ({
+            id: book.id,
+            name: book.name,
+            publisher: book.publisher
+        }));
+
+        const response = h.response({
+            status: 'success',
+            data: {
+                books: aBooks
+            }
+        });
+        response.code(200);
+        return response;
+    }
+
+    if(finished !== undefined){
+        let book;
+        if (finished == 0){
+            book = books.filter((book) => book.finished == false);
+        } else if (finished == 1){
+            book = books.filter((book) => book.finished == true);
+        } else {
+            book = books;
+        }
+
+        const aBooks = book.map(book => ({
+            id: book.id,
+            name: book.name,
+            publisher: book.publisher
+        }));
+
+        const response = h.response({
+            status: 'success',
+            data: {
+                books: aBooks
+            }
+        });
+        response.code(200);
+        return response;
+    }
 
     const iBooks = books.map(book => ({
         id: book.id,
